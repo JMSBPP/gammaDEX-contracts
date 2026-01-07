@@ -136,9 +136,10 @@ contract LiquidityManager is Multicall, Payment, SelfPermit, IPairMintCallback {
     address squared = SquaredAddress.computeAddress(
       factory, params.token0, params.token1, params.token0Exp, params.token1Exp, params.upperBound
     );
-
+    // R_X, R_Y
     uint256 r0 = ISquared(squared).reserve0();
     uint256 r1 = ISquared(squared).reserve1();
+    // L
     uint256 totalLiquidity = ISquared(squared).totalLiquidity();
 
     uint256 amount0;
@@ -148,28 +149,33 @@ contract LiquidityManager is Multicall, Payment, SelfPermit, IPairMintCallback {
       amount0 = params.amount0Min;
       amount1 = params.amount1Min;
     } else {
+      // r_0 = (l*R_0/L)
       amount0 = FullMath.mulDivRoundingUp(params.liquidity, r0, totalLiquidity);
+      // r_1 = (l*R_1/L)
       amount1 = FullMath.mulDivRoundingUp(params.liquidity, r1, totalLiquidity);
     }
 
     if (amount0 < params.amount0Min || amount1 < params.amount1Min) revert AmountError();
 
-    uint256 size = ISquared(squared).deposit(
-      address(this),
-      params.liquidity,
-      abi.encode(
-        PairMintCallbackData({
-          token0: params.token0,
-          token1: params.token1,
-          token0Exp: params.token0Exp,
-          token1Exp: params.token1Exp,
-          upperBound: params.upperBound,
-          amount0: amount0,
-          amount1: amount1,
-          payer: msg.sender
-        })
-      )
-    );
+    /// note: breakpoint
+
+    uint256 size = ISquared(squared)
+      .deposit(
+        address(this),
+        params.liquidity,
+        abi.encode(
+          PairMintCallbackData({
+            token0: params.token0,
+            token1: params.token1,
+            token0Exp: params.token0Exp,
+            token1Exp: params.token1Exp,
+            upperBound: params.upperBound,
+            amount0: amount0,
+            amount1: amount1,
+            payer: msg.sender
+          })
+        )
+      );
     if (size < params.sizeMin) revert AmountError();
 
     Position memory position = positions[params.recipient][squared]; // SLOAD

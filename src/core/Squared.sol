@@ -191,7 +191,12 @@ contract Squared is ERC20, JumpRate, Pair, ISquared {
   }
 
   /// @inheritdoc ISquared
-  function collect(address to, uint256 collateralRequested) external override nonReentrant returns (uint256 collateral) {
+  function collect(address to, uint256 collateralRequested)
+    external
+    override
+    nonReentrant
+    returns (uint256 collateral)
+  {
     Position.Info storage position = positions[msg.sender]; // SLOAD
     uint256 tokensOwed = position.tokensOwed;
 
