@@ -1,0 +1,11 @@
+{
+  "lib/create3-factory": {
+    "rev": "fb8ee3d9466fe1b2c6eea87061c793e24b3c0a24"
+  },
+  "lib/forge-std": {
+    "branch": {
+      "name": "v1.4.0",
+      "rev": "b6a506db2262cad5ff982a87789ee6d1558ec861"
+    }
+  }
+}

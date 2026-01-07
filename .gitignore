@@ -9,6 +9,9 @@
 **/node_modules
 **/out
 
+notes/**
+refs/**
+
 # files
 *.env
 *.log
